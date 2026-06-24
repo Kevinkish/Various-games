@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:quiz_master/data/datasource/remote/dto/trivia_category.dart';
+import 'package:quiz_master/domain/utils/constants.dart';
 
 class CategoryService {
   // Fonction asynchrone qui retourne une Liste de TriviaCategory
@@ -9,7 +10,9 @@ class CategoryService {
 
     try {
       // 1. On lance la requête GET
-      final response = await http.get(url);
+      final response = await http
+          .get(url)
+          .timeout(Duration(seconds: Constants.timeoutDuration));
 
       // 2. On vérifie si le serveur a répondu avec succès (Code 200)
       if (response.statusCode == 200) {

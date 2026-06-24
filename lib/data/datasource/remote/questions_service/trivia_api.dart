@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:quiz_master/data/datasource/remote/dto/trivia_question.dart';
+import 'package:quiz_master/domain/utils/constants.dart';
 
 class TriviaApiService {
   final http.Client _client;
@@ -15,7 +16,7 @@ class TriviaApiService {
 
     final response = await _client
         .get(uri)
-        .timeout(const Duration(seconds: 15));
+        .timeout(const Duration(seconds: Constants.timeoutDuration));
     if (response.statusCode != 200) {
       throw Exception('Échec réseau (${response.statusCode}).');
     }

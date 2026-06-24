@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:quiz_master/data/datasource/remote/trivia_api.dart';
+import 'package:quiz_master/data/datasource/remote/questions_service/trivia_api.dart';
 import 'package:quiz_master/domain/models/match_record.dart';
 import 'package:quiz_master/data/datasource/remote/dto/trivia_question.dart';
 

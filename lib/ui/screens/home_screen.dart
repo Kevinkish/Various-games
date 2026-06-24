@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:quiz_master/domain/models/match_record.dart';
+import 'package:quiz_master/domain/utils/size_util.dart';
 import 'package:quiz_master/ui/screens/category_screen.dart';
+import 'package:quiz_master/ui/styles/app_images.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -48,60 +50,73 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Historique des duels',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ValueListenableBuilder<Box<MatchRecord>>(
-                valueListenable: box.listenable(),
-                builder: (context, box, _) {
-                  final records = box.values.toList().reversed.toList();
-                  if (records.isEmpty) {
-                    return const Center(
-                      child: Text('Aucun duel enregistré pour le moment.'),
-                    );
-                  }
+      body: Stack(
+        children: [
+          Image.asset(
+            AppImages.game4,
+            fit: BoxFit.cover,
+            alignment: .bottomEnd,
+            width: SizeUtil.sizeWidth(context),
+            height: SizeUtil.sizeHeight(context),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Historique des duels',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ValueListenableBuilder<Box<MatchRecord>>(
+                    valueListenable: box.listenable(),
+                    builder: (context, box, _) {
+                      final records = box.values.toList().reversed.toList();
+                      if (records.isEmpty) {
+                        return const Center(
+                          child: Text('Aucun duel enregistré pour le moment.'),
+                        );
+                      }
 
-                  return ListView.separated(
-                    itemCount: records.length,
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemBuilder: (context, index) {
-                      final record = records[index];
-                      final dateText = record.date
-                          .toLocal()
-                          .toString()
-                          .split('.')
-                          .first;
-                      return ListTile(
-                        title: Text(record.categoryName),
-                        subtitle: Text(
-                          'J1: ${record.scorePlayer1} / J2: ${record.scorePlayer2}',
-                        ),
-                        trailing: Text(dateText),
+                      return ListView.separated(
+                        itemCount: records.length,
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemBuilder: (context, index) {
+                          final record = records[index];
+                          final dateText = record.date
+                              .toLocal()
+                              .toString()
+                              .split('.')
+                              .first;
+                          return ListTile(
+                            title: Text(record.categoryName),
+                            subtitle: Text(
+                              'J1: ${record.scorePlayer1} / J2: ${record.scorePlayer2}',
+                            ),
+                            trailing: Text(dateText),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => CategoryScreen()));
+                  },
+                  child: const Text('Nouveau Duel'),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => CategoryScreen()));
-              },
-              child: const Text('Nouveau Duel'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

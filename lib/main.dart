@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_master/data/providers/category_provider.dart';
 import 'package:quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/domain/models/match_record.dart';
 import 'package:quiz_master/ui/screens/home_screen.dart';
@@ -26,10 +27,12 @@ class QuizMasterApp extends StatelessWidget {
           create: (_) =>
               QuizProvider(matchBox: Hive.box<MatchRecord>('match_records')),
         ),
+        ChangeNotifierProvider(create: (_) => CategoryProvider()),
       ],
       child: MaterialApp(
         title: 'Quiz Master',
         debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.system,
         theme: ThemeData(
           colorScheme: scheme,
           useMaterial3: true,
@@ -38,6 +41,7 @@ class QuizMasterApp extends StatelessWidget {
             foregroundColor: scheme.onPrimary,
             elevation: 2,
           ),
+
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               backgroundColor: scheme.secondary,
