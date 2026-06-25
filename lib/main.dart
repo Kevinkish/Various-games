@@ -5,6 +5,7 @@ import 'package:quiz_master/data/providers/category_provider.dart';
 import 'package:quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/domain/models/match_record.dart';
 import 'package:quiz_master/ui/screens/home_screen.dart';
+import 'package:quiz_master/ui/styles/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +21,6 @@ class QuizMasterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -31,27 +31,12 @@ class QuizMasterApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Quiz Master',
-        debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.system,
-        theme: ThemeData(
-          colorScheme: scheme,
-          useMaterial3: true,
-          appBarTheme: AppBarTheme(
-            backgroundColor: scheme.primary,
-            foregroundColor: scheme.onPrimary,
-            elevation: 2,
-          ),
 
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: scheme.secondary,
-              foregroundColor: scheme.onSecondary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-        ),
+        debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.light,
+        theme: theme,
+
+        darkTheme: darkTheme,
         home: const HomeScreen(),
       ),
     );
