@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quiz_master/ui/styles/app_colors.dart';
+import 'package:quiz_master/quiz_master/ui/styles/app_colors.dart';
 
 // --- THÈME CLAIR ---
 final theme = ThemeData(

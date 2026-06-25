@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_master/data/providers/quiz_provider.dart';
-import 'package:quiz_master/domain/utils/size_util.dart';
-import 'package:quiz_master/ui/screens/quiz/quiz_screen.dart';
-import 'package:quiz_master/ui/styles/app_colors.dart';
-import 'package:quiz_master/ui/styles/app_images.dart';
+import 'package:quiz_master/quiz_master/data/providers/quiz_provider.dart';
+import 'package:quiz_master/quiz_master/domain/utils/size_util.dart';
+import 'package:quiz_master/quiz_master/ui/screens/quiz/quiz_screen.dart';
+import 'package:quiz_master/quiz_master/ui/styles/app_colors.dart';
+import 'package:quiz_master/quiz_master/ui/styles/app_images.dart';
 
 class TransitionScreen extends StatelessWidget {
   const TransitionScreen({super.key});

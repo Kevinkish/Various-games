@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:quiz_master/data/datasource/remote/category_service/trivia_category_service.dart';
-import 'package:quiz_master/data/datasource/remote/dto/trivia_category.dart';
+import 'package:quiz_master/quiz_master/data/datasource/remote/category_service/trivia_category_service.dart';
+import 'package:quiz_master/quiz_master/data/datasource/remote/dto/trivia_category.dart';
 
 enum CategoryState { idle, empty, loading, error, completed }
 

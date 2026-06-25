@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:quiz_master/data/datasource/remote/dto/trivia_category.dart';
-import 'package:quiz_master/domain/utils/constants.dart';
+import 'package:quiz_master/quiz_master/data/datasource/remote/dto/trivia_category.dart';
+import 'package:quiz_master/quiz_master/domain/utils/constants.dart';
 
 class CategoryService {
   // Fonction asynchrone qui retourne une Liste de TriviaCategory

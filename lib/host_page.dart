@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_master/ui/screens/quiz/quiz_home_screen.dart';
+import 'package:quiz_master/quiz_master/ui/screens/quiz/quiz_home_screen.dart';
 
 class HostPage extends StatelessWidget {
   const HostPage({super.key});

@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:quiz_master/domain/models/match_record.dart';
-import 'package:quiz_master/ui/screens/quiz/quiz_category_screen.dart';
-import 'package:quiz_master/ui/styles/app_images.dart';
-import 'package:quiz_master/ui/widgets/buttons.dart';
+import 'package:quiz_master/quiz_master/domain/models/match_record.dart';
+import 'package:quiz_master/quiz_master/ui/screens/quiz/quiz_category_screen.dart';
+import 'package:quiz_master/quiz_master/ui/styles/app_images.dart';
+import 'package:quiz_master/quiz_master/ui/widgets/buttons.dart';
 
 class QuizHomeScreen extends StatelessWidget {
   const QuizHomeScreen({super.key});
