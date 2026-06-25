@@ -1,14 +1,11 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/domain/utils/size_util.dart';
-import 'package:quiz_master/ui/screens/quiz_result_screen.dart';
-import 'package:quiz_master/ui/screens/quiz_transition_screen.dart';
+import 'package:quiz_master/ui/screens/quiz/quiz_result_screen.dart';
+import 'package:quiz_master/ui/screens/quiz/quiz_transition_screen.dart';
 import 'package:quiz_master/ui/styles/app_images.dart';
 import 'package:quiz_master/ui/widgets/buttons.dart';
-// Importe le bouton d'option que l'on vient de créer au dessus
-// import 'package:quiz_master/ui/widgets/quiz_option_button.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
