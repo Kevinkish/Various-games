@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:quiz_master/domain/models/match_record.dart';
-import 'package:quiz_master/ui/screens/category_screen.dart';
+import 'package:quiz_master/ui/screens/quiz/quiz_category_screen.dart';
 import 'package:quiz_master/ui/styles/app_images.dart';
 import 'package:quiz_master/ui/widgets/buttons.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class QuizHomeScreen extends StatelessWidget {
+  const QuizHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

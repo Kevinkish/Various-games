@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/domain/utils/size_util.dart';
-import 'package:quiz_master/ui/screens/result_screen.dart';
-import 'package:quiz_master/ui/screens/transition_screen.dart';
+import 'package:quiz_master/ui/screens/quiz_result_screen.dart';
+import 'package:quiz_master/ui/screens/quiz_transition_screen.dart';
 import 'package:quiz_master/ui/styles/app_images.dart';
 import 'package:quiz_master/ui/widgets/buttons.dart';
 // Importe le bouton d'option que l'on vient de créer au dessus

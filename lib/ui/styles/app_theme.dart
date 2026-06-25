@@ -5,6 +5,7 @@ import 'package:quiz_master/ui/styles/app_colors.dart';
 const String _appFont = 'Outfit';
 
 final theme = ThemeData.light(useMaterial3: true).copyWith(
+  brightness: .light,
   scaffoldBackgroundColor: AppColors.background,
   colorScheme:
       ColorScheme.fromSeed(
@@ -50,6 +51,8 @@ final theme = ThemeData.light(useMaterial3: true).copyWith(
 );
 
 final darkTheme = ThemeData.dark(useMaterial3: true).copyWith(
+  brightness: .light,
+
   scaffoldBackgroundColor: AppColors.backgroundDark,
   colorScheme:
       ColorScheme.fromSeed(

@@ -4,7 +4,7 @@ import 'package:quiz_master/data/datasource/remote/category_service/trivia_categ
 import 'package:quiz_master/data/datasource/remote/dto/trivia_category.dart';
 import 'package:quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/domain/utils/size_util.dart';
-import 'package:quiz_master/ui/screens/quiz_screen.dart';
+import 'package:quiz_master/ui/screens/quiz/quiz_screen.dart';
 import 'package:quiz_master/ui/styles/app_colors.dart';
 import 'package:quiz_master/ui/styles/app_images.dart';
 import 'package:quiz_master/ui/widgets/buttons.dart';
@@ -30,13 +30,12 @@ class CategoryScreen extends StatelessWidget {
           ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 18.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: 18),
+
                   Column(
                     spacing: 6,
                     crossAxisAlignment: CrossAxisAlignment.start,

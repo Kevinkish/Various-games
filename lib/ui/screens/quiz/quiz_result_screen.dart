@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/domain/utils/size_util.dart';
-import 'package:quiz_master/ui/screens/home_screen.dart';
+import 'package:quiz_master/ui/screens/quiz_home_screen.dart';
 import 'package:quiz_master/ui/styles/app_images.dart';
 import 'package:quiz_master/ui/widgets/buttons.dart';
 
@@ -170,7 +170,9 @@ class ResultScreen extends StatelessWidget {
                     onTap: () {
                       provider.resetGame();
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const QuizHomeScreen(),
+                        ),
                         (route) => false,
                       );
                     },

@@ -1,10 +1,12 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_master/data/providers/category_provider.dart';
 import 'package:quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/domain/models/match_record.dart';
-import 'package:quiz_master/ui/screens/home_screen.dart';
+import 'package:quiz_master/host_page.dart';
+import 'package:quiz_master/ui/screens/quiz_home_screen.dart';
 import 'package:quiz_master/ui/styles/app_theme.dart';
 
 Future<void> main() async {
@@ -37,7 +39,7 @@ class QuizMasterApp extends StatelessWidget {
         theme: theme,
 
         darkTheme: darkTheme,
-        home: const HomeScreen(),
+        home: const HostPage(),
       ),
     );
   }
