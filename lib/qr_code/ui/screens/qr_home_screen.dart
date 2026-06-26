@@ -19,8 +19,10 @@ class QrHomeScreen extends StatefulWidget {
 class _QrHomeScreenState extends State<QrHomeScreen> {
   String? _scannedCode;
   bool _isScannerActive = true;
+  bool _isLoadingProduct = false;
   String? _productName;
   String? _nutriScore;
+  Map<String, dynamic>? _productDetails;
 
   // Initialisation du contrôleur pour mobile_scanner v7
   final MobileScannerController _scannerController = MobileScannerController();
@@ -65,6 +67,13 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
   }
 
   Future<void> _fetchProductInfo(String barcode) async {
+    setState(() {
+      _isLoadingProduct = true;
+      _productDetails = null;
+      _productName = null;
+      _nutriScore = null;
+    });
+
     try {
       final response = await http.get(
         Uri.parse(
@@ -77,15 +86,124 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
       final map = jsonDecode(response.body) as Map<String, dynamic>;
       final product = map['product'] as Map<String, dynamic>?;
       setState(() {
+        _productDetails = product;
         _productName = product?['product_name'] as String?;
         _nutriScore = product?['nutriscore_grade'] as String?;
       });
     } catch (_) {
       setState(() {
+        _productDetails = null;
         _productName = null;
         _nutriScore = null;
       });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingProduct = false;
+        });
+      }
     }
+  }
+
+  void _showProductDetails() {
+    if (_productDetails == null) return;
+    final product = _productDetails!;
+    final imageUrl =
+        (product['selected_images']
+                as Map<String, dynamic>?)?['front']?['thumb']?['en']
+            as String? ??
+        product['image_front_thumb_url'] as String?;
+    final brand = product['brands'] as String?;
+    final categories = product['categories'] as String?;
+    final allergens = product['allergens'] as String?;
+    final ingredients = product['ingredients_text'] as String?;
+    final quantity = product['quantity'] as String?;
+    final origins = product['origins'] as String?;
+    final labels = product['labels'] as String?;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            product['product_name'] as String? ?? 'Détails du produit',
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (imageUrl != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      imageUrl,
+                      height: 160,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                if (imageUrl != null) const SizedBox(height: 16),
+                if (brand != null) ...[
+                  Text('Marque', style: Theme.of(context).textTheme.labelLarge),
+                  Text(brand),
+                  const SizedBox(height: 12),
+                ],
+                if (categories != null) ...[
+                  Text(
+                    'Catégories',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  Text(categories),
+                  const SizedBox(height: 12),
+                ],
+                if (labels != null) ...[
+                  Text('Labels', style: Theme.of(context).textTheme.labelLarge),
+                  Text(labels),
+                  const SizedBox(height: 12),
+                ],
+                if (allergens != null) ...[
+                  Text(
+                    'Allergènes',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  Text(allergens),
+                  const SizedBox(height: 12),
+                ],
+                if (ingredients != null) ...[
+                  Text(
+                    'Ingrédients',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  Text(ingredients),
+                  const SizedBox(height: 12),
+                ],
+                if (quantity != null) ...[
+                  Text(
+                    'Quantité',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  Text(quantity),
+                  const SizedBox(height: 12),
+                ],
+                if (origins != null) ...[
+                  Text(
+                    'Origine',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  Text(origins),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Fermer'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -200,6 +318,71 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
                             style: theme.textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 18),
+                          if (_isLoadingProduct)
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Chargement des détails...',
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                              ],
+                            ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 10,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed:
+                                    (_productDetails == null ||
+                                        _isLoadingProduct)
+                                    ? null
+                                    : _showProductDetails,
+                                icon: const Icon(Icons.info_outline),
+                                label: const Text('Détails produit'),
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+                              OutlinedButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    _isScannerActive = true;
+                                    _scannedCode = null;
+                                    _productName = null;
+                                    _nutriScore = null;
+                                    _productDetails = null;
+                                  });
+                                  _scannerController.start();
+                                },
+                                icon: const Icon(Icons.refresh),
+                                label: const Text('Relancer'),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
                           Center(
                             child: QrImageView(
                               data: _scannedCode!,

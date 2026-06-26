@@ -134,7 +134,29 @@ class CashFlowProvider extends ChangeNotifier {
   }
 
   List<BalanceTransaction> _buildMinimalTransactions() {
-    final balances = _balances;
+    return _buildTransactionsFromBalances(_balances);
+  }
+
+  List<BalanceTransaction> minimalTransactionsForExpense(Expense expense) {
+    final balances = <int, double>{};
+    balances[expense.payerId] =
+        (balances[expense.payerId] ?? 0) + expense.amount;
+
+    final shares = _expenseShares
+        .where((share) => share.expenseId == expense.id && !share.paid)
+        .toList();
+
+    for (final share in shares) {
+      balances[share.participantId] =
+          (balances[share.participantId] ?? 0) - share.shareAmount;
+    }
+
+    return _buildTransactionsFromBalances(balances);
+  }
+
+  List<BalanceTransaction> _buildTransactionsFromBalances(
+    Map<int, double> balances,
+  ) {
     final creditors = balances.entries
         .where((entry) => entry.value > 0)
         .map((entry) => MapEntry(entry.key, entry.value))
