@@ -1,6 +1,10 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_master/cashFlow/data/database/cash_flow_database.dart';
+import 'package:quiz_master/cashFlow/ui/providers/cash_flow_provider.dart';
+import 'package:quiz_master/moodly/data/database/mood_database.dart';
+import 'package:quiz_master/moodly/ui/providers/mood_provider.dart';
 import 'package:quiz_master/quiz_master/data/providers/category_provider.dart';
 import 'package:quiz_master/quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/quiz_master/domain/models/match_record.dart';
@@ -28,6 +32,13 @@ class QuizMasterApp extends StatelessWidget {
               QuizProvider(matchBox: Hive.box<MatchRecord>('match_records')),
         ),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(
+          create: (_) =>
+              CashFlowProvider(CashFlowDatabase.instance)..loadData(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MoodProvider(MoodDatabase.instance)..loadEntries(),
+        ),
       ],
       child: MaterialApp(
         title: 'Quiz Master',

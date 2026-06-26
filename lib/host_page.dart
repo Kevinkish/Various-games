@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_master/cashFlow/ui/screens/expense_list_screen.dart';
+import 'package:quiz_master/moodly/ui/screens/mood_home_screen.dart';
 import 'package:quiz_master/quiz_master/ui/screens/quiz/quiz_home_screen.dart';
 
 class HostPage extends StatelessWidget {
@@ -8,8 +10,8 @@ class HostPage extends StatelessWidget {
   Widget build(BuildContext context) {
     const List<Map<String, dynamic>> items = [
       {'icon': Icons.quiz, "title": "Quiz Home", "page": QuizHomeScreen()},
-      {'icon': Icons.quiz, "title": "Quiz Home", "page": QuizHomeScreen()},
-      {'icon': Icons.quiz, "title": "Quiz Home", "page": QuizHomeScreen()},
+      {'icon': Icons.money, "title": "CashFlow", "page": ExpenseListScreen()},
+      {'icon': Icons.chat_bubble, "title": "Mood", "page": MoodHomeScreen()},
       {'icon': Icons.quiz, "title": "Quiz Home", "page": QuizHomeScreen()},
     ];
     return Scaffold(
