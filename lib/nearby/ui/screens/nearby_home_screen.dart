@@ -12,7 +12,7 @@ class NearbyHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NearBy'),
+        title: const Text('NearBy', style: TextStyle(color: Colors.black)),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -50,57 +50,138 @@ class _NearbyBodyState extends State<_NearbyBody> {
         ? LatLng(provider.userLatitude!, provider.userLongitude!)
         : LatLng(48.8566, 2.3522);
 
+    final isLoading = provider.isLoading;
+    final placeCount = provider.places.length;
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  initialValue: provider.selectedCategory,
-                  decoration: InputDecoration(
-                    labelText: 'Catégorie',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  items: provider.categories.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(category, style: theme.textTheme.bodyMedium),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      provider.changeCategory(value);
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              ElevatedButton(
-                onPressed: provider.isLoading
-                    ? null
-                    : () => provider.loadPlaces(),
-                child: provider.isLoading
-                    ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: theme.colorScheme.onPrimary,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            elevation: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Trouver des lieux proches',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      )
-                    : const Text('Actualiser'),
+                      ),
+                      Icon(Icons.place, color: theme.colorScheme.primary),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          initialValue: provider.selectedCategory,
+                          decoration: InputDecoration(
+                            labelText: 'Catégorie',
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          items: provider.categories.map((category) {
+                            return DropdownMenuItem(
+                              value: category,
+                              child: Text(
+                                category,
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              provider.changeCategory(value);
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      FilledButton.icon(
+                        onPressed: isLoading
+                            ? null
+                            : () => provider.loadPlaces(),
+                        icon: isLoading
+                            ? const SizedBox.shrink()
+                            : const Icon(Icons.refresh),
+                        label: isLoading
+                            ? SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: theme.colorScheme.onPrimary,
+                                ),
+                              )
+                            : const Text('Actualiser'),
+                        style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 18,
+                            horizontal: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      Chip(
+                        label: Text('$placeCount lieux'),
+                        backgroundColor: theme.colorScheme.primary.withValues(
+                          alpha: 36,
+                        ),
+                      ),
+                      Chip(
+                        label: Text(
+                          provider.hasPermission
+                              ? 'GPS activé'
+                              : 'GPS désactivé',
+                        ),
+                        backgroundColor: provider.hasPermission
+                            ? theme.colorScheme.secondary.withValues(alpha: 36)
+                            : theme.colorScheme.error.withValues(alpha: 36),
+                      ),
+                      if (provider.userLatitude != null &&
+                          provider.userLongitude != null)
+                        Chip(
+                          label: const Text('Rayon 5 km'),
+                          backgroundColor:
+                              theme.colorScheme.surfaceContainerHighest,
+                        ),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
         if (provider.errorMessage != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               color: theme.colorScheme.errorContainer,
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -115,10 +196,18 @@ class _NearbyBodyState extends State<_NearbyBody> {
           ),
         if (!provider.hasPermission)
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Accès GPS requis pour afficher les lieux à proximité.',
-              style: theme.textTheme.bodyLarge,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                const Icon(Icons.gps_off, color: Colors.redAccent),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Accès GPS requis pour afficher les lieux à proximité.',
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                ),
+              ],
             ),
           ),
         if (provider.userLatitude != null && provider.userLongitude != null)
@@ -138,58 +227,100 @@ class _NearbyBodyState extends State<_NearbyBody> {
           ),
         const SizedBox(height: 16),
         if (provider.userLatitude != null && provider.userLongitude != null)
-          SizedBox(
-            height: 260,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              clipBehavior: Clip.hardEdge,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
-              clipBehavior: Clip.hardEdge,
-              child: FlutterMap(
-                mapController: _mapController,
-                // 1. Changement ici : initialCenter et initialZoom
-                options: MapOptions(
-                  initialCenter: center,
-                  initialZoom: 13,
-                  minZoom: 3,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'fr.example.quiz_master',
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        width: 40,
-                        height: 40,
-                        point: center,
-                        // 2. Changement ici : 'child' au lieu de 'builder'
-                        child: const Icon(
-                          Icons.my_location,
-                          color: Colors.blueAccent,
+              elevation: 4,
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Stack(
+                  children: [
+                    FlutterMap(
+                      mapController: _mapController,
+                      options: MapOptions(
+                        initialCenter: center,
+                        initialZoom: 13,
+                        minZoom: 3,
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate:
+                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName: 'fr.example.quiz_master',
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              width: 40,
+                              height: 40,
+                              point: center,
+                              child: const Icon(
+                                Icons.my_location,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                            ...provider.places.map((place) {
+                              final isHighlighted =
+                                  place.id == _highlightedPlaceId;
+                              return Marker(
+                                width: isHighlighted ? 52 : 40,
+                                height: isHighlighted ? 52 : 40,
+                                point: LatLng(place.latitude, place.longitude),
+                                child: Icon(
+                                  Icons.location_on,
+                                  color: isHighlighted
+                                      ? theme.colorScheme.primary
+                                      : theme.colorScheme.secondary,
+                                  size: isHighlighted ? 52 : 40,
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withValues(alpha: 0),
+                              Colors.black.withValues(alpha: 115),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '$placeCount lieu(s) trouvés',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              'Zoom sur la carte',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      ...provider.places.map((place) {
-                        final isHighlighted = place.id == _highlightedPlaceId;
-                        return Marker(
-                          width: isHighlighted ? 52 : 40,
-                          height: isHighlighted ? 52 : 40,
-                          point: LatLng(place.latitude, place.longitude),
-                          child: Icon(
-                            Icons.location_on,
-                            color: isHighlighted
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.secondary,
-                            size: isHighlighted ? 52 : 40,
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -207,7 +338,7 @@ class _NearbyBodyState extends State<_NearbyBody> {
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: provider.places.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  separatorBuilder: (context, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final place = provider.places[index];
                     return _NearbyPlaceTile(

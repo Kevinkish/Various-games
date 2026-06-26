@@ -95,7 +95,7 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan & Co'),
+        title: const Text('Scan & Co', style: TextStyle(color: Colors.black)),
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code),
@@ -110,118 +110,227 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Container(
-            height: 360,
-            decoration: BoxDecoration(
+          Card(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: theme.colorScheme.outline),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: MobileScanner(
-                controller: _scannerController, // Passage du contrôleur ici
-                onDetect: _onDetect,
-                fit: BoxFit.cover,
-              ),
+            clipBehavior: Clip.hardEdge,
+            elevation: 4,
+            child: Stack(
+              children: [
+                SizedBox(
+                  height: 360,
+                  width: double.infinity,
+                  child: MobileScanner(
+                    controller: _scannerController,
+                    onDetect: _onDetect,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  left: 16,
+                  top: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.45),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      _isScannerActive ? 'Scanner actif' : 'Scan en pause',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
-          if (_scannedCode != null) ...[
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: _scannedCode == null
+                ? Card(
+                    key: const ValueKey('empty'),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        'Scannez un code pour voir le résultat ici.',
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    ),
+                  )
+                : Card(
+                    key: const ValueKey('result'),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Résultat du scan',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'Code : $_scannedCode',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Produit : ${_productName ?? 'Non trouvé'}',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'NutriScore : ${_nutriScore?.toUpperCase() ?? 'N/A'}',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 18),
+                          Center(
+                            child: QrImageView(
+                              data: _scannedCode!,
+                              size: 180,
+                              eyeStyle: QrEyeStyle(
+                                eyeShape: QrEyeShape.square,
+                                color: theme.colorScheme.primary,
+                              ),
+                              dataModuleStyle: QrDataModuleStyle(
+                                dataModuleShape: QrDataModuleShape.square,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _isScannerActive = true;
+                      _scannedCode = null;
+                      _productName = null;
+                      _nutriScore = null;
+                    });
+                    _scannerController.start();
+                  },
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Relancer le scan'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: provider.loadHistory,
+                  child: const Text('Actualiser historique'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Historique des scans',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (provider.history.isEmpty)
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Résultat du scan',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  'Aucun scan pour le moment. Essayez de scanner un code.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+            )
+          else
+            Column(
+              children: provider.history.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                return Dismissible(
+                  key: ValueKey(item.scannedAt.toIso8601String() + item.code),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                  onDismissed: (_) => provider.removeScan(index),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 2,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 14,
+                      ),
+                      title: Text(
+                        item.code,
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      subtitle: Text(item.productName ?? 'Produit inconnu'),
+                      trailing: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 31,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(item.nutriScore?.toUpperCase() ?? '--'),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Code: $_scannedCode',
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Produit: ${_productName ?? 'Non trouvé'}',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'NutriScore: ${_nutriScore?.toUpperCase() ?? 'N/A'}',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 16),
-                    QrImageView(data: _scannedCode!, size: 140),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
-            const SizedBox(height: 16),
-          ],
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _isScannerActive = true;
-                    _scannedCode = null;
-                    _productName = null;
-                    _nutriScore = null;
-                  });
-                  // Relancer la caméra proprement
-                  _scannerController.start();
-                },
-                child: const Text('Réactiver le scan'),
-              ),
-              TextButton(
-                onPressed: () {
-                  provider.loadHistory();
-                },
-                child: const Text('Actualiser l’historique'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Historique des scans',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          ...provider.history.asMap().entries.map((entry) {
-            final index = entry.key;
-            final item = entry.value;
-            return Dismissible(
-              key: ValueKey(item.scannedAt.toIso8601String() + item.code),
-              direction: DismissDirection.endToStart,
-              background: Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                color: theme.colorScheme.error,
-                child: const Icon(Icons.delete, color: Colors.white),
-              ),
-              onDismissed: (_) => provider.removeScan(index),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: ListTile(
-                  title: Text(item.code),
-                  subtitle: Text(item.productName ?? 'Produit inconnu'),
-                  trailing: Text(item.nutriScore?.toUpperCase() ?? '--'),
-                ),
-              ),
-            );
-          }),
         ],
       ),
     );

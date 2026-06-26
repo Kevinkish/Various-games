@@ -45,6 +45,12 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          'Moodly',
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_month),
@@ -65,19 +71,25 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Moodly', style: theme.textTheme.titleLarge),
-          SizedBox(height: 10),
+          Text(
+            'Exprimez votre humeur du jour',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
           Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),
+            elevation: 3,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sélectionnez votre humeur du jour',
+                    'Humeur du jour',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -87,14 +99,19 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
                     selectedMood: entry?.moodLevel ?? _selectedMood,
                     onChanged: (value) => setState(() => _selectedMood = value),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 18),
                   TextField(
                     controller: _noteController,
                     decoration: InputDecoration(
                       labelText: 'Note du jour',
-                      border: const OutlineInputBorder(),
+                      filled: true,
+                      fillColor: theme.colorScheme.surfaceContainerHighest,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
-                    maxLines: 3,
+                    maxLines: 4,
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -127,7 +144,7 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
                         horizontal: 22,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(18),
                       ),
                     ),
                     child: const Text('Enregistrer'),
@@ -183,7 +200,7 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
                       children: summary.map((item) {
                         final mood = MoodSelector.moods[item.moodLevel - 1];
                         return Chip(
-                          backgroundColor: mood.color.withOpacity(0.14),
+                          backgroundColor: mood.color.withValues(alpha: 36),
                           label: Text(
                             '${mood.label}: ${item.percentage.toStringAsFixed(0)}%',
                           ),
@@ -202,67 +219,64 @@ class _MoodHomeScreenState extends State<MoodHomeScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: provider.calendarDays.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              childAspectRatio: 0.9,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
             ),
-            itemBuilder: (context, index) {
-              final date = provider.calendarDays[index];
-              final dayEntry = provider.entryForDate(date);
-              final selected =
-                  date.year == provider.selectedDate.year &&
-                  date.month == provider.selectedDate.month &&
-                  date.day == provider.selectedDate.day;
-              return GestureDetector(
-                onTap: () {
-                  provider.updateSelectedDate(date);
-                  if (dayEntry != null) {
-                    _selectedMood = dayEntry.moodLevel;
-                    _noteController.text = dayEntry.note;
-                  }
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? theme.colorScheme.primary.withOpacity(0.18)
-                        : theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: selected
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline,
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: .max,
-                    children: [
-                      if (dayEntry != null) ...[
-                        Expanded(
-                          child: Text(
-                            MoodSelector.moods[dayEntry.moodLevel - 1].emoji,
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ] else
-                        Expanded(
-                          child: Text(
-                            '${date.day}',
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
-                    ],
-                  ),
+            elevation: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: provider.calendarDays.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  childAspectRatio: 0.9,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                 ),
-              );
-            },
+                itemBuilder: (context, index) {
+                  final date = provider.calendarDays[index];
+                  final dayEntry = provider.entryForDate(date);
+                  final selected =
+                      date.year == provider.selectedDate.year &&
+                      date.month == provider.selectedDate.month &&
+                      date.day == provider.selectedDate.day;
+                  return GestureDetector(
+                    onTap: () {
+                      provider.updateSelectedDate(date);
+                      if (dayEntry != null) {
+                        _selectedMood = dayEntry.moodLevel;
+                        _noteController.text = dayEntry.note;
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? theme.colorScheme.primary.withOpacity(0.18)
+                            : theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: selected
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.outline,
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Center(
+                        child: Text(
+                          dayEntry != null
+                              ? MoodSelector.moods[dayEntry.moodLevel - 1].emoji
+                              : '${date.day}',
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
           const SizedBox(height: 20),
         ],

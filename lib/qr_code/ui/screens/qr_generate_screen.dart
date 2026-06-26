@@ -41,83 +41,19 @@ class _QrGenerateScreenState extends State<QrGenerateScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),
+            elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Type de QR',
+                    'Aperçu QR',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    children: _types.map((type) {
-                      final selected = _selectedType == type;
-                      return ChoiceChip(
-                        label: Text(type),
-                        selected: selected,
-                        onSelected: (_) => setState(() => _selectedType = type),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _dataController,
-                    minLines: 1,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      labelText: _selectedType == 'URL'
-                          ? 'URL'
-                          : _selectedType == 'Texte'
-                          ? 'Texte'
-                          : 'Mot de passe WiFi',
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Couleur du QR',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    children:
-                        [
-                              Colors.black,
-                              Colors.blue,
-                              Colors.green,
-                              Colors.purple,
-                              Colors.orange,
-                            ]
-                            .map(
-                              (color) => GestureDetector(
-                                onTap: () => setState(() => _qrColor = color),
-                                child: Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: _qrColor == color
-                                          ? theme.colorScheme.primary
-                                          : Colors.transparent,
-                                      width: 3,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                  ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   Center(
                     child: QrImageView(
                       data: _displayData.isEmpty ? ' ' : _displayData,
@@ -132,19 +68,130 @@ class _QrGenerateScreenState extends State<QrGenerateScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   Text(
-                    'Aperçu',
+                    'Contenu généré',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _displayData.isEmpty
+                        ? 'Entrez du texte, une URL ou un mot de passe WiFi.'
+                        : _displayData,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            elevation: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Type de QR',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 10,
+                    children: _types.map((type) {
+                      final selected = _selectedType == type;
+                      return ChoiceChip(
+                        label: Text(type),
+                        selected: selected,
+                        onSelected: (_) => setState(() => _selectedType = type),
+                        selectedColor: theme.colorScheme.primary,
+                        backgroundColor:
+                            theme.colorScheme.surfaceContainerHighest,
+                        labelStyle: TextStyle(
+                          color: selected
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.onSurface,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _dataController,
+                    minLines: 1,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: _selectedType == 'URL'
+                          ? 'URL'
+                          : _selectedType == 'Texte'
+                          ? 'Texte'
+                          : 'Mot de passe WiFi',
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            elevation: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    _displayData.isEmpty
-                        ? 'Entrez du contenu pour générer le QR code.'
-                        : _displayData,
-                    style: theme.textTheme.bodyMedium,
+                    'Couleur du QR',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 10,
+                    children:
+                        [
+                          Colors.black,
+                          Colors.blue,
+                          Colors.green,
+                          Colors.purple,
+                          Colors.orange,
+                        ].map((color) {
+                          final selected = _qrColor == color;
+                          return GestureDetector(
+                            onTap: () => setState(() => _qrColor = color),
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: color,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: selected
+                                      ? theme.colorScheme.primary
+                                      : Colors.transparent,
+                                  width: 3,
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                   ),
                 ],
               ),

@@ -10,44 +10,91 @@ class HostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const List<Map<String, dynamic>> items = [
-      {'icon': Icons.quiz, "title": "Quiz Home", "page": QuizHomeScreen()},
-      {'icon': Icons.money, "title": "CashFlow", "page": ExpenseListScreen()},
-      {'icon': Icons.chat_bubble, "title": "Mood", "page": MoodHomeScreen()},
-      {'icon': Icons.place, "title": "NearBy", "page": NearbyHomeScreen()},
-      {'icon': Icons.qr_code, "title": "Qr Code", "page": QrHomeScreen()},
+    final theme = Theme.of(context);
+
+    const items = <_HostItem>[
+      _HostItem(icon: Icons.quiz, title: 'Quiz Home', page: QuizHomeScreen()),
+      _HostItem(
+        icon: Icons.money,
+        title: 'CashFlow',
+        page: ExpenseListScreen(),
+      ),
+      _HostItem(icon: Icons.mood, title: 'Moodly', page: MoodHomeScreen()),
+      _HostItem(icon: Icons.place, title: 'NearBy', page: NearbyHomeScreen()),
+      _HostItem(icon: Icons.qr_code, title: 'QR Code', page: QrHomeScreen()),
     ];
+
     return Scaffold(
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text(
+          'Applications rapides',
+          style: TextStyle(color: Colors.black),
+        ),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
-          padding: const EdgeInsets.all(16.0),
-
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            mainAxisSpacing: 8.0,
-            crossAxisSpacing: 8.0,
-            mainAxisExtent: 200,
-          ),
-
           itemCount: items.length,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 260,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1,
+          ),
           itemBuilder: (context, index) {
             final item = items[index];
-
-            return ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => item['page']),
-                );
-              },
-              child: Center(
-                child: Column(
-                  spacing: 10,
-                  mainAxisSize: .min,
-                  children: [
-                    Icon(item['icon']!, size: 40),
-                    Text(item['title']!),
-                  ],
+            return Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              elevation: 4,
+              clipBehavior: Clip.hardEdge,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => item.page),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        theme.colorScheme.surfaceContainerHighest,
+                        theme.colorScheme.primary.withValues(alpha: 0.1),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        item.icon,
+                        size: 48,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        item.title,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Flexible(
+                        child: Text(
+                          'Explorez cette fonctionnalité',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -56,4 +103,16 @@ class HostPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class _HostItem {
+  final IconData icon;
+  final String title;
+  final Widget page;
+
+  const _HostItem({
+    required this.icon,
+    required this.title,
+    required this.page,
+  });
 }
