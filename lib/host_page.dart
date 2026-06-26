@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_master/cashFlow/ui/screens/expense_list_screen.dart';
 import 'package:quiz_master/moodly/ui/screens/mood_home_screen.dart';
+import 'package:quiz_master/nearby/ui/screens/nearby_home_screen.dart';
+import 'package:quiz_master/qr_code/ui/screens/qr_home_screen.dart';
 import 'package:quiz_master/quiz_master/ui/screens/quiz/quiz_home_screen.dart';
 
 class HostPage extends StatelessWidget {
@@ -12,7 +14,8 @@ class HostPage extends StatelessWidget {
       {'icon': Icons.quiz, "title": "Quiz Home", "page": QuizHomeScreen()},
       {'icon': Icons.money, "title": "CashFlow", "page": ExpenseListScreen()},
       {'icon': Icons.chat_bubble, "title": "Mood", "page": MoodHomeScreen()},
-      {'icon': Icons.quiz, "title": "Quiz Home", "page": QuizHomeScreen()},
+      {'icon': Icons.place, "title": "NearBy", "page": NearbyHomeScreen()},
+      {'icon': Icons.qr_code, "title": "Qr Code", "page": QrHomeScreen()},
     ];
     return Scaffold(
       body: SafeArea(

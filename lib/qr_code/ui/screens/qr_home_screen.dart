@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart'; // v7.0.0
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
 import '../../data/models/scan_history_entry.dart';
 import '../providers/scan_history_provider.dart';
 import 'qr_generate_screen.dart';
@@ -22,13 +22,34 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
   String? _productName;
   String? _nutriScore;
 
-  void _onDetect(Barcode barcode, MobileScannerArguments? arguments) async {
+  // Initialisation du contrôleur pour mobile_scanner v7
+  final MobileScannerController _scannerController = MobileScannerController();
+
+  @override
+  void dispose() {
+    _scannerController.dispose(); // Toujours libérer le contrôleur
+    super.dispose();
+  }
+
+  // Mise à jour de la signature pour mobile_scanner v7
+  void _onDetect(BarcodeCapture capture) async {
     if (!_isScannerActive) return;
-    final rawValue = barcode.rawValue;
+
+    // Récupération du premier code détecté dans la liste
+    final List<Barcode> barcodes = capture.barcodes;
+    if (barcodes.isEmpty) return;
+
+    final rawValue = barcodes.first.rawValue;
     if (rawValue == null || rawValue.isEmpty) return;
 
-    setState(() => _isScannerActive = false);
-    _scannedCode = rawValue;
+    setState(() {
+      _isScannerActive = false;
+      _scannedCode = rawValue;
+    });
+
+    // Optionnel mais recommandé en v7 : mettre en pause la caméra physiquement
+    _scannerController.stop();
+
     await _fetchProductInfo(rawValue);
     if (!mounted) return;
 
@@ -41,7 +62,6 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
         nutriScore: _nutriScore,
       ),
     );
-    setState(() {});
   }
 
   Future<void> _fetchProductInfo(String barcode) async {
@@ -98,7 +118,11 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
-              child: MobileScanner(onDetect: _onDetect, fit: BoxFit.cover),
+              child: MobileScanner(
+                controller: _scannerController, // Passage du contrôleur ici
+                onDetect: _onDetect,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -152,6 +176,8 @@ class _QrHomeScreenState extends State<QrHomeScreen> {
                     _productName = null;
                     _nutriScore = null;
                   });
+                  // Relancer la caméra proprement
+                  _scannerController.start();
                 },
                 child: const Text('Réactiver le scan'),
               ),

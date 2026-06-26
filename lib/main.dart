@@ -5,6 +5,8 @@ import 'package:quiz_master/cashFlow/data/database/cash_flow_database.dart';
 import 'package:quiz_master/cashFlow/ui/providers/cash_flow_provider.dart';
 import 'package:quiz_master/moodly/data/database/mood_database.dart';
 import 'package:quiz_master/moodly/ui/providers/mood_provider.dart';
+import 'package:quiz_master/nearby/ui/providers/nearby_provider.dart';
+import 'package:quiz_master/qr_code/ui/providers/scan_history_provider.dart';
 import 'package:quiz_master/quiz_master/data/providers/category_provider.dart';
 import 'package:quiz_master/quiz_master/data/providers/quiz_provider.dart';
 import 'package:quiz_master/quiz_master/domain/models/match_record.dart';
@@ -39,6 +41,11 @@ class QuizMasterApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => MoodProvider(MoodDatabase.instance)..loadEntries(),
         ),
+        ChangeNotifierProvider(create: (_) => NearbyProvider()..loadPlaces()),
+        ChangeNotifierProvider(
+          create: (_) => ScanHistoryProvider()..loadHistory(),
+        ),
+        ChangeNotifierProvider(create: (_) => NearbyProvider()..loadPlaces()),
       ],
       child: MaterialApp(
         title: 'Quiz Master',
