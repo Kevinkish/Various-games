@@ -93,9 +93,9 @@ class CashFlowProvider extends ChangeNotifier {
   }
 
   Future<void> _seedParticipants() async {
-    await database.insertParticipant(Participant(name: 'Alice'));
-    await database.insertParticipant(Participant(name: 'Bob'));
-    await database.insertParticipant(Participant(name: 'Chloé'));
+    await database.insertParticipant(Participant(name: 'Nsimire'));
+    await database.insertParticipant(Participant(name: 'Justin'));
+    await database.insertParticipant(Participant(name: 'Shamavu'));
   }
 
   Future<void> addExpense({
